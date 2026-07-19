@@ -39,6 +39,8 @@ Deploy to your own Cloudflare Workers account.
 | `spotify_devices` | List available devices |
 | `spotify_transfer` | Transfer playback to device |
 | `spotify_playlists` | Get user playlists |
+| `spotify_create_playlist` | Create a playlist (optionally seed tracks) |
+| `spotify_add_to_playlist` | Add tracks to an existing playlist |
 | `spotify_recent` | Recently played tracks |
 
 ### Lyrics
@@ -67,11 +69,13 @@ Deploy to your own Cloudflare Workers account.
 {
   "mcpServers": {
     "tempo": {
-      "url": "https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev/sse"
+      "url": "https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev/sse?k=YOUR_AUTH_TOKEN"
     }
   }
 }
 ```
+
+> The MCP endpoints are gated. The `?k=` param carries your `AUTH_TOKEN` (see Setup). Clients that support custom headers can send `Authorization: Bearer <AUTH_TOKEN>` instead of the query param.
 
 ## Setup
 
@@ -87,9 +91,10 @@ Deploy to your own Cloudflare Workers account.
 3. Configure wrangler.toml with your settings
 4. Set secrets:
    ```bash
-   npx wrangler secret put SPOTIFY_CLIENT_ID
    npx wrangler secret put SPOTIFY_CLIENT_SECRET
+   npx wrangler secret put AUTH_TOKEN   # your MCP endpoint key — any strong random string
    ```
+   (`SPOTIFY_CLIENT_ID` and `HF_SPACE_URL` are plain `[vars]` in `wrangler.toml` — fill those in there.)
 5. Deploy: `npm run deploy`
 6. Visit `https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev/auth`
 7. Authorize with Spotify

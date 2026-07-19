@@ -1,9 +1,8 @@
-name = "music-perception-mcp"
+name = "tempo"
 main = "src/index.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Durable Objects for MCP state
 [[durable_objects.bindings]]
 name = "AUDIO_PERCEPTION"
 class_name = "AudioPerception"
@@ -12,14 +11,24 @@ class_name = "AudioPerception"
 tag = "v1"
 new_sqlite_classes = ["AudioPerception"]
 
-# Share KV namespace with Spotify MCP for auth tokens
+# Your own KV namespace for Spotify OAuth tokens.
+# Create one with:  wrangler kv namespace create SPOTIFY_KV
+# then paste its id below.
 [[kv_namespaces]]
 binding = "SPOTIFY_KV"
-id = "dc50213c7139477b898bbc0dbf31d852"
+id = "YOUR_KV_NAMESPACE_ID"
 
 [vars]
-SPOTIFY_CLIENT_ID = "a1cc34fd068a4bd7a3a8052439d01e49"
-HF_SPACE_URL = "https://itsamaris-audio-analysis-api.hf.space"
+# Your Spotify app's client ID (Spotify Developer Dashboard).
+SPOTIFY_CLIENT_ID = "YOUR_SPOTIFY_CLIENT_ID"
+# Your own Hugging Face audio-analysis Space (see hf-space/ to deploy your own).
+HF_SPACE_URL = "https://your-audio-analysis-space.hf.space"
 
-# Secrets (must be set via wrangler secret put):
-# SPOTIFY_CLIENT_SECRET
+# Secrets — set via `wrangler secret put`, NEVER commit real values:
+#   wrangler secret put SPOTIFY_CLIENT_SECRET   # your Spotify app secret
+#   wrangler secret put AUTH_TOKEN              # REQUIRED: gates /mcp, /sse, /sse/message, /api/*
+#
+# AUTH_TOKEN is the MCP endpoint key. Clients must send it as
+#   Authorization: Bearer <AUTH_TOKEN>
+# or, for headerless clients, as a ?k=<AUTH_TOKEN> / ?key=<AUTH_TOKEN> query param.
+# Without it, those endpoints return 401. (SPOTIFY_KEY is accepted as an alternate.)

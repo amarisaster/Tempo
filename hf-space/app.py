@@ -497,7 +497,7 @@ with gr.Blocks(title="Audio Analysis API", theme=gr.themes.Soft(primary_hue="cya
     ```python
     import requests
     response = requests.post(
-        "https://itsamaris-audio-analysis-api.hf.space/api/predict",
+        "https://your-audio-analysis-space.hf.space/api/predict",
         json={"data": [audio_file_path, True]}  # True = include spectrogram
     )
     ```
@@ -505,7 +505,7 @@ with gr.Blocks(title="Audio Analysis API", theme=gr.themes.Soft(primary_hue="cya
     **For YouTube analysis:**
     ```python
     response = requests.post(
-        "https://itsamaris-audio-analysis-api.hf.space/api/predict",
+        "https://your-audio-analysis-space.hf.space/api/predict",
         json={"data": [None, youtube_url, True]}
     )
     ```

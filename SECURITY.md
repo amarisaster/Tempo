@@ -21,6 +21,7 @@ When you deploy Tempo, it runs on **your own** Cloudflare account. You control t
 | **Queue** | Manage playback queue |
 | **Lyrics** | Fetch synced lyrics for current/specified tracks |
 | **Perception** | Analyze audio features (BPM, key, energy) via `perceive_now_playing` |
+| **Playlists** | Create playlists, add tracks, list your playlists |
 
 ### External Service Connections
 
@@ -44,6 +45,24 @@ wrangler secret put SPOTIFY_CLIENT_SECRET
 ```
 
 OAuth tokens are stored in Cloudflare KV, scoped to your account.
+
+### MCP Endpoint Authentication
+
+The MCP endpoints — `/mcp`, `/sse`, `/sse/message`, and `/api/*` — are **gated by a token you set**. Set it once:
+
+```bash
+wrangler secret put AUTH_TOKEN
+```
+
+Every request to those endpoints must present it, either as a header:
+
+```
+Authorization: Bearer <AUTH_TOKEN>
+```
+
+or, for clients that can only pass a URL, as a query parameter: `?k=<AUTH_TOKEN>`. Requests without a valid token get `401 Unauthorized`. `/health`, `/auth`, and `/callback` stay open so OAuth and status checks still work.
+
+> **What this means:** without `AUTH_TOKEN` set and sent, anyone who learns your worker URL could drive your Spotify. Set it before you connect a client. If you're upgrading from an earlier version, add `AUTH_TOKEN` and update your client config in the same change — otherwise you'll lock yourself out mid-session.
 
 ### No Listening History Storage
 
